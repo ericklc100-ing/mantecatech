@@ -1,0 +1,16 @@
+# render.yaml — Deploy en Render
+services:
+  - type: web
+    name: matecatech
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npx serve dist -s -l 10000
+    envVars:
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false
+      - key: VITE_WHATSAPP_NUMBER
+        sync: false
+      - key: VITE_ADMIN_EMAIL
+        sync: false

@@ -1,0 +1,282 @@
+/* ==========================================================================
+   NAVBAR BASE (PC & GLOBAL)
+   ========================================================================== */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--azul);
+  border-bottom: 3px solid var(--oro);
+  height: 80px;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 1rem;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  text-decoration: none;
+}
+
+.logoText {
+  color: white;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+/* --- BUSCADOR DESKTOP --- */
+.searchDesktop {
+  position: relative;
+  flex: 1;
+  max-width: 450px;
+  margin: 0 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.searchDesktop input {
+  width: 100%;
+  padding: 0.7rem 1rem 0.7rem 2.8rem;
+  border-radius: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 0.9rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.searchDesktop input:focus {
+  background: white;
+  color: var(--azul);
+  box-shadow: 0 0 15px rgba(255, 184, 0, 0.3);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 15px;
+  color: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+}
+
+.searchDesktop input:focus + .searchIcon {
+  color: var(--azul);
+}
+
+/* --- LINKS DESKTOP --- */
+.desktopNav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.navLink {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: var(--font-cond);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  transition: 0.3s;
+}
+
+.navLink:hover {
+  color: var(--oro);
+}
+
+/* --- BOTÓN ADMIN (DESTACADO) --- */
+.adminLink {
+  color: var(--oro) !important;
+  border: 1px solid rgba(255, 184, 0, 0.4);
+  padding: 0.4rem 1rem !important;
+  border-radius: 20px;
+  background: rgba(255, 184, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.adminLink:hover {
+  background: var(--oro);
+  color: var(--azul) !important;
+}
+
+/* --- ACCIONES (CART & USER) --- */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cartBtn {
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  padding: 0.6rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.cartBtn:hover { background: rgba(255, 255, 255, 0.2); }
+
+.cartBadge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: var(--verde);
+  color: white;
+  font-size: 0.7rem;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  border: 2px solid var(--azul);
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  background: var(--oro);
+  color: var(--azul);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   MOBILE DESIGN (RESPONSIVE)
+   ========================================================================== */
+
+/* Ocultar elementos de móvil en PC */
+.menuToggle, .mobileSearchBtn, .mobileSearchWrap, .mobileNav, .overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .navbar { height: 65px; }
+  .searchDesktop, .desktopNav { display: none; }
+
+  /* Botones específicos de móvil */
+  .menuToggle, .mobileSearchBtn {
+    display: flex;
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+  }
+
+  .menuToggle { order: -1; } /* Sandwich a la izquierda */
+
+  /* Buscador desplegable móvil */
+  .mobileSearchWrap {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: var(--azul);
+    height: 0;
+    overflow: hidden;
+    transition: height 0.3s ease;
+    border-bottom: 0 solid var(--oro);
+  }
+
+  .showSearch {
+    height: 60px;
+    padding: 10px 15px;
+    border-bottom-width: 3px;
+  }
+
+  .mobileSearchWrap input {
+    width: 100%;
+    height: 40px;
+    border-radius: 8px;
+    border: none;
+    padding: 0 1rem;
+    font-size: 1rem;
+    outline: none;
+  }
+
+  /* PANEL LATERAL (DRAWER) */
+  .mobileNav {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 280px;
+    height: 100vh;
+    background: var(--azul);
+    z-index: 2000;
+    flex-direction: column;
+    padding: 2rem 1.5rem;
+    transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 10px 0 40px rgba(0,0,0,0.6);
+    border-right: 4px solid var(--oro);
+  }
+
+  .mobileNavActive { left: 0; }
+
+  .overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 8, 20, 0.8);
+    backdrop-filter: blur(4px);
+    z-index: 1500;
+  }
+
+  .mobileLink {
+    color: white;
+    font-family: var(--font-cond);
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 10px;
+    text-decoration: none;
+    background: rgba(255,255,255,0.05);
+  }
+
+  .mobileSeparator {
+    color: var(--oro);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 1.5rem 0 0.5rem 1rem;
+    opacity: 0.6;
+  }
+
+  .adminMobile {
+    background: rgba(255, 184, 0, 0.15) !important;
+    color: var(--oro) !important;
+    border: 1px solid var(--oro);
+  }
+}

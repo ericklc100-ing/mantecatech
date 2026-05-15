@@ -1,0 +1,181 @@
+.page { padding: 2.5rem 0 3rem; }
+
+.pageHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: var(--radius-sm);
+  background: var(--blanco);
+  border: 2px solid var(--gris-medio);
+  font-family: var(--font-cond);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gris-texto);
+  transition: all 0.2s;
+  flex: 1; /* Hace que los botones crezcan en móvil */
+  justify-content: center;
+  min-width: 140px;
+}
+
+.tab:hover { border-color: var(--azul); color: var(--azul); }
+.tabActive { background: var(--azul) !important; color: var(--blanco) !important; border-color: var(--azul) !important; }
+
+.section { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.formCard {
+  background: var(--blanco);
+  border-radius: var(--radius);
+  box-shadow: var(--sombra);
+  padding: 1.5rem;
+  border-left: 4px solid var(--oro);
+}
+
+.formTitle {
+  font-family: var(--font-cond);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--azul);
+  margin-bottom: 1.25rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0 1rem;
+}
+
+/* --- RESPONSIVE PARA EL ADMIN --- */
+
+@media (max-width: 768px) {
+  .page { padding: 1.5rem 0; }
+  
+  /* Los títulos de página más pequeños */
+  .pageHeader h1 { font-size: 1.8rem; width: 100%; }
+  
+  /* El botón de "Nuevo Producto" ocupa todo el ancho */
+  .sectionHeader button { width: 100%; justify-content: center; }
+
+  /* En el formulario, los inputs pasan a una sola columna */
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Las tablas son el mayor problema en móvil, este wrapper permite scroll lateral */
+  .table-wrapper {
+    margin: 0 -1.5rem; /* Rompe el padding del container para ganar espacio */
+    padding: 0 1.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabs {
+    flex-direction: column; /* Pestañas una debajo de otra */
+  }
+  .tab {
+    width: 100%;
+  }
+  .formCard {
+    padding: 1rem;
+  }
+}
+
+/* --- RESTO DE ESTILOS --- */
+
+.orderId {
+  font-family: 'Courier New', monospace;
+  background: var(--gris-claro);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.orderItems {
+  list-style: none;
+  font-size: 0.82rem;
+}
+.orderItems li::before { content: '▪ '; }
+
+.configCard {
+  background: var(--blanco);
+  border-radius: var(--radius);
+  box-shadow: var(--sombra);
+  padding: 1.5rem;
+}
+
+.configGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 0 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* En móvil, la configuración también a una columna */
+@media (max-width: 600px) {
+  .configGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.configGrid small {
+  font-size: 0.78rem;
+  color: var(--gris-texto);
+  margin-top: -0.4rem;
+  display: block;
+}
+
+.configPreview {
+  background: linear-gradient(135deg, #e8f0f8, #d8e8f8);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  border-left: 4px solid var(--azul-claro);
+}
+
+.configPreview h4 {
+  font-family: var(--font-cond);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--azul);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.configPreview p {
+  font-size: 0.88rem;
+  color: var(--azul-medio);
+  margin: 0.2rem 0;
+}
+
+.spin { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
