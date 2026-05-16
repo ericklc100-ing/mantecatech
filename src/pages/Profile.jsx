@@ -3,11 +3,13 @@ import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import { Navigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import { User, Package, Save } from 'lucide-react'
+import { User, Package, Save, LogOut } from 'lucide-react'
 import styles from './Profile.module.css'
+// Importamos los estilos globales de los bloques oscuros para mantener la simetría visual
+import authStyles from './Auth.module.css' 
 
 export default function Profile() {
-  const { user, profile, updateProfile, loading } = useAuth()
+  const { user, profile, updateProfile, signOut, loading } = useAuth() // Traemos signOut del contexto
   const [orders, setOrders] = useState([])
   const [loadingOrders, setLoadingOrders] = useState(true)
   const [nombre, setNombre] = useState('')
@@ -47,12 +49,39 @@ export default function Profile() {
     setSaving(false)
   }
 
+  // Manejador del botón de salir
+  async function handleSignOut() {
+    try {
+      if (signOut) {
+        await signOut()
+      } else {
+        await supabase.auth.signOut()
+      }
+      toast.success('Sesión cerrada correctamente')
+    } catch (error) {
+      toast.error('Error al cerrar sesión')
+    }
+  }
+
   return (
     <div className={styles.page}>
       <div className="container">
+        
+        {/* CABECERA INTEGRADA CON EL BOTÓN DE CERRAR SESIÓN */}
         <div className={styles.pageHeader}>
-          <h1 className="page-title">MI CUENTA</h1>
-          <p className={styles.email}>{user.email}</p>
+          <div>
+            <h1 className="page-title">MI CUENTA</h1>
+            <p className={styles.email}>{user.email}</p>
+          </div>
+          <button 
+            type="button" 
+            onClick={handleSignOut} 
+            className={styles.logoutBtn}
+            title="Cerrar Sesión"
+          >
+            <LogOut size={16} />
+            <span>Cerrar Sesión</span>
+          </button>
         </div>
 
         <div className={styles.tabs}>
@@ -68,20 +97,46 @@ export default function Profile() {
           <div className={styles.card}>
             <form onSubmit={handleSave} className={styles.form}>
               <div className={styles.formGrid}>
+                
                 <div className="form-group">
                   <label>Nombre completo</label>
-                  <input type="text" value={nombre} onChange={e => setNombre(e.target.value)} placeholder="Tu nombre" />
+                  <div className={authStyles.inputFieldBlock}>
+                    <input 
+                      type="text" 
+                      value={nombre} 
+                      onChange={e => setNombre(e.target.value)} 
+                      placeholder="Tu nombre" 
+                    />
+                  </div>
                 </div>
+
                 <div className="form-group">
                   <label>Teléfono</label>
-                  <input type="text" value={telefono} onChange={e => setTelefono(e.target.value)} placeholder="+54 11 ..." />
+                  <div className={authStyles.inputFieldBlock}>
+                    <input 
+                      type="text" 
+                      value={telefono} 
+                      onChange={e => setTelefono(e.target.value)} 
+                      placeholder="+54 11 ..." 
+                    />
+                  </div>
                 </div>
+
                 <div className="form-group" style={{ gridColumn: '1 / -1' }}>
                   <label>Dirección de entrega</label>
-                  <input type="text" value={direccion} onChange={e => setDireccion(e.target.value)} placeholder="Calle, número, localidad" />
+                  <div className={authStyles.inputFieldBlock}>
+                    <input 
+                      type="text" 
+                      value={direccion} 
+                      onChange={e => setDireccion(e.target.value)} 
+                      placeholder="Calle, número, localidad" 
+                    />
+                  </div>
                 </div>
+
               </div>
-              <button type="submit" className="btn btn-primary" disabled={saving}>
+              
+              <button type="submit" className={authStyles.submitBtn} style={{ marginTop: '1rem', width: 'auto', padding: '0.85rem 2rem' }} disabled={saving}>
                 <Save size={16} /> {saving ? 'Guardando...' : 'Guardar cambios'}
               </button>
             </form>

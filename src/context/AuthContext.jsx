@@ -47,6 +47,13 @@ export function AuthProvider({ children }) {
     await supabase.auth.signOut()
   }
 
+  async function resetPassword(email) {
+    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    })
+    return { data, error }
+  }
+
   async function updateProfile(updates) {
     const { data, error } = await supabase
       .from('profiles')
@@ -61,7 +68,7 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider value={{
       user, profile, loading,
-      signUp, signIn, signOut, updateProfile,
+      signUp, signIn, signOut, updateProfile, resetPassword,
       isAdmin: profile?.es_admin === true
     }}>
       {children}

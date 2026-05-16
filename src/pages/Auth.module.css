@@ -1,81 +1,328 @@
-.page {
-  min-height: calc(100vh - 64px);
+.splitPage {
+  display: flex;
+  min-height: calc(100vh - 64px); /* Ajustado para convivir de forma responsive con tu Navbar */
+  width: 100%;
+  background: #000d1a; /* Fondo ultra oscuro complementario corporativo */
+}
+
+/* BANNER DE LA IZQUIERDA (PREMIUM SIDESHOW) */
+.bannerSection {
+  flex: 1.2;
+  position: relative;
+  background-image: url('https://images.unsplash.com/photo-1593305841991-05c297ba4575?q=80&w=1957&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  padding: 4rem;
+}
+
+@media (max-width: 1024px) {
+  .bannerSection { display: none !important; } /* Ocultar fluidamente en tablets y celulares */
+}
+
+.bannerOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0, 49, 83, 0.95), rgba(0, 13, 26, 0.9));
+}
+
+.bannerContent {
+  position: relative;
+  z-index: 10;
+  color: white;
+  max-width: 550px;
+}
+
+.logoBadge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display, inherit);
+  font-weight: 800;
+  font-size: 1.3rem;
+  letter-spacing: 1px;
+  margin-bottom: 3rem;
+  color: var(--oro, #ffb800);
+}
+
+.bannerContent h1 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.bannerContent p {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+/* SECCIÓN FORMULARIO (DERECHA) */
+.formSection {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1rem;
-  background: linear-gradient(135deg, #e8eef5, #d0dcea);
+  padding: 2rem 1.5rem;
+  background: #000d1a;
 }
 
 .card {
-  background: var(--blanco);
-  border-radius: var(--radius);
-  box-shadow: 0 8px 40px rgba(0,49,83,0.15);
   width: 100%;
-  max-width: 420px;
-  overflow: hidden;
+  max-width: 440px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
-.cardHeader {
-  background: var(--azul);
-  padding: 1.5rem;
-  display: flex;
+.mobileHeader {
+  display: none;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  border-bottom: 3px solid var(--oro);
+  gap: 8px;
+  margin-bottom: 2rem;
 }
-
-.tvIcon { color: var(--oro); }
 
 .brand {
-  font-family: var(--font-display);
-  font-size: 2rem;
-  color: var(--blanco);
-  letter-spacing: 0.05em;
+  color: white;
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: 0.5px;
 }
 
+@media (max-width: 1024px) {
+  .mobileHeader { display: flex !important; }
+}
+
+.welcomeText {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.welcomeText h2 {
+  color: white;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.welcomeText p {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* TABS MODERNOS */
 .tabs {
   display: flex;
-  border-bottom: 2px solid var(--gris-claro);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255,255,255,0.05);
 }
 
 .tab {
   flex: 1;
-  padding: 0.85rem;
-  background: transparent;
-  font-family: var(--font-cond);
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--gris-texto);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-  border-bottom: 3px solid transparent;
-  transition: all 0.2s;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 0.75rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-.tab:hover { color: var(--azul); }
-.tabActive { color: var(--azul) !important; border-bottom-color: var(--oro) !important; }
+.tab:hover { color: white; }
 
-.form { padding: 1.5rem; }
+.tabActive {
+  background: var(--azul, #003153) !important;
+  color: var(--oro, #ffb800) !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
 
-.passWrap { position: relative; }
+/* ESTRUCTURA UNIFICADA DE INPUTS ESTILO BLOQUE OSCURO (CONTRASEÑA) */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
 
-.passWrap input { width: 100%; padding-right: 2.8rem; }
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.formGroup label {
+  color: rgba(255,255,255,0.85);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* El contenedor que le da el estilo de bloque oscuro unificado a todos los inputs */
+.inputFieldBlock {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4); /* Bloque negro translúcido idéntico a la contraseña */
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+/* Efecto focus aplicado directamente sobre el contenedor del bloque */
+.inputFieldBlock:focus-within {
+  border-color: var(--oro, #ffb800);
+  box-shadow: 0 0 10px rgba(255, 184, 0, 0.2);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Reseteo nativo del input interno para que se funda con el bloque */
+.inputFieldBlock input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  color: white !important;
+  font-size: 0.95rem;
+}
+
+/* Margen izquierdo extra automático si el input lleva un icono al inicio */
+.inputFieldBlock.hasIcon input {
+  padding-left: 2.8rem;
+}
+
+/* Margen derecho extra automático si lleva el ojo de la contraseña */
+.inputFieldBlock.hasEye input {
+  padding-right: 2.8rem;
+}
+
+/* Posicionamiento de Iconos dentro de sus respectivos bloques */
+.inputIcon {
+  position: absolute;
+  left: 14px;
+  color: rgba(255,255,255,0.3);
+  pointer-events: none;
+}
 
 .eyeBtn {
   position: absolute;
-  right: 0.8rem;
-  top: 50%;
-  transform: translateY(-50%);
+  right: 14px;
   background: transparent;
-  color: var(--gris-texto);
-  padding: 0.2rem;
+  border: none;
+  color: rgba(255,255,255,0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: color 0.2s;
 }
-.eyeBtn:hover { color: var(--azul); }
 
-.submitBtn { width: 100%; justify-content: center; padding: 0.85rem !important; font-size: 1rem !important; margin-top: 0.5rem; }
+.eyeBtn:hover { color: var(--oro, #ffb800); }
+
+/* EXTRAS Y LINKS */
+.formOptions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -0.25rem;
+}
+
+.forgotPass {
+  color: var(--oro, #ffb800);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+.forgotPass:hover { text-decoration: underline; }
+
+/* BOTÓN DE ENVIAR */
+.submitBtn {
+  width: 100%;
+  padding: 0.85rem;
+  background: linear-gradient(135deg, var(--oro, #ffb800), #e0a200);
+  color: #000d1a;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(255, 184, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.submitBtn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 184, 0, 0.35);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.backToLoginWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 1.5rem;
+}
+
+.backToLogin {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--oro, #ffb800);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.backToLogin:hover { color: white; }
+
+/* SPINNER Y ESTADO DE ÉXITO */
+.successState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.successIcon { margin-bottom: 1.5rem; }
+.btnSecondary {
+  background: transparent !important;
+  border: 1.5px solid rgba(255, 184, 0, 0.4) !important;
+  color: var(--oro, #ffb800) !important;
+  box-shadow: none;
+}
+.btnSecondary:hover { background: rgba(255, 184, 0, 0.05) !important; }
+.spinnerWrap { display: flex; align-items: center; gap: 8px; }
+.spinner { animation: rotate 1s linear infinite; }
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

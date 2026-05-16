@@ -183,25 +183,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className={styles.footer}>
-        <div className="container">
-          <div className={styles.footerInner}>
-            <div className={styles.footerBrand}>
-              <div className={styles.footerLogo}>MANTECATECH</div>
-              <p>Smart TVs • Lomas del Mirador</p>
-            </div>
-            <div className={styles.footerLinks}>
-              <Link to="/productos">Tienda</Link>
-              <Link to="/login">Admin</Link>
-            </div>
-          </div>
-          <div className={styles.footerBottom}>
-            <p>© 2026 MantecaTech. Pasión por la tecnología.</p>
-          </div>
-        </div>
-      </footer>
-
+ 
     </div>
   )
 }

@@ -14,6 +14,8 @@ import ProductDetail from './pages/ProductDetail' // Nueva página importada
 import Auth from './pages/Auth'
 import Profile from './pages/Profile'
 import Admin from './pages/Admin'
+import ForgotPassword from './pages/ForgotPassword'
+import ResetPassword from './pages/ResetPassword'
 
 import './styles/globals.css'
 
@@ -48,6 +50,11 @@ export default function App() {
             <Route path="/login" element={<Auth />} />
             <Route path="/perfil" element={<Profile />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+
+
+
           </Routes>
           <Footer />
         </CartProvider>
