@@ -55,7 +55,7 @@ export default function CartDrawer({ isOpen, onClose }) {
       mensaje += `\n*TOTAL:* $${total.toLocaleString('es-AR')}`
 
       const encoded = encodeURIComponent(mensaje)
-      window.open(`https://wa.me/541123456789?text=${encoded}`, '_blank')
+      window.open(`https://wa.me/541138627202?text=${encoded}`, '_blank')
       clearCart()
       onClose()
       setStep('cart')
