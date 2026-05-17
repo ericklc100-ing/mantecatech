@@ -3,7 +3,6 @@ import { X, Trash2, Plus, Minus, MapPin, Loader, MessageCircle, ShoppingBag } fr
 import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
 import { useShipping } from '../../hooks/useShipping'
-import { supabase } from '../../lib/supabase'
 import toast from 'react-hot-toast'
 import styles from './CartDrawer.module.css'
 
@@ -20,6 +19,8 @@ export default function CartDrawer({ isOpen, onClose }) {
 
   const total = subtotal + (shipping?.costo || 0)
 
+  if (!isOpen) return null
+
   async function handleGeo() {
     if (!navigator.geolocation) {
       toast.error('Tu navegador no soporta geolocalización')
@@ -31,169 +32,178 @@ export default function CartDrawer({ isOpen, onClose }) {
     )
   }
 
-  async function handleCP() {
-    if (!cp || cp.length < 4) { toast.error('Ingresá un código postal válido'); return }
-    calcularEnvio({ cp, subtotal })
+  async function handleCP(e) {
+    e.preventDefault()
+    if (!cp.trim()) return
+    calcularEnvio({ cp: cp.trim(), subtotal })
   }
 
   async function handleCheckout() {
-    if (!address) { toast.error('Ingresá la dirección de entrega'); return }
     setLoadingOrder(true)
-
     try {
-      const cartDetails = items.map(i => ({
-        product_id: i.id,
-        nombre: i.nombre,
-        cantidad: i.cantidad,
-        precio_unitario: i.precio
-      }))
+      let mensaje = `*NUEVO PEDIDO - MANTECATECH*\n\n`
+      mensaje += `*Cliente:* ${profile?.nombre || user?.email || 'Detalle'}\n`
+      mensaje += `*Dirección:* ${address}\n\n`
+      mensaje += `*Productos:*\n`
+      
+      items.forEach(item => {
+        mensaje += `• ${item.cantidad}x ${item.nombre} - $${(item.precio * item.cantidad).toLocaleString('es-AR')}\n`
+      })
 
-      const { data: order, error } = await supabase.from('orders').insert({
-        user_id: user?.id || null,
-        detalles_carrito: cartDetails,
-        direccion_entrega: address,
-        costo_envio: shipping?.costo || 0,
-        subtotal,
-        total,
-        estado: 'Pendiente',
-        metodo_pago: 'WhatsApp'
-      }).select().single()
+      mensaje += `\n*Subtotal:* $${subtotal.toLocaleString('es-AR')}`
+      mensaje += `\n*Envío:* $${shipping.costo.toLocaleString('es-AR')}`
+      mensaje += `\n*TOTAL:* $${total.toLocaleString('es-AR')}`
 
-      if (error) throw error
-
-      // Construir mensaje WhatsApp
-      const lineas = items.map(i => `▪️ ${i.cantidad}x ${i.nombre} — $${(i.precio * i.cantidad).toLocaleString('es-AR')}`)
-      const msg = [
-        `🛒 *NUEVO PEDIDO MatecaTech #${order.id.slice(-8).toUpperCase()}*`,
-        '',
-        ...lineas,
-        '',
-        `📍 *Envío:* ${address}`,
-        `🚚 *Costo de envío:* $${(shipping?.costo || 0).toLocaleString('es-AR')}`,
-        `💰 *TOTAL: $${total.toLocaleString('es-AR')}*`,
-        '',
-        `👤 *Cliente:* ${profile?.nombre || user?.email || 'Invitado'}`,
-        `📱 Por favor confirmar disponibilidad y forma de pago.`
-      ].join('\n')
-
-      const phone = import.meta.env.VITE_WHATSAPP_NUMBER || '5491100000000'
-      const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`
-      window.open(waUrl, '_blank')
-
+      const encoded = encodeURIComponent(mensaje)
+      window.open(`https://wa.me/541123456789?text=${encoded}`, '_blank')
       clearCart()
-      setStep('cart')
       onClose()
-      toast.success('¡Pedido enviado por WhatsApp!', { duration: 4000 })
+      setStep('cart')
     } catch (err) {
-      toast.error('Error al crear el pedido: ' + err.message)
+      toast.error('Error al procesar el pedido')
     } finally {
       setLoadingOrder(false)
     }
   }
 
-  if (!isOpen) return null
-
   return (
     <>
+      {/* Cierre al hacer clic en la zona oscura exterior */}
       <div className={styles.overlay} onClick={onClose} />
+      
       <div className={styles.drawer}>
-        {/* Header */}
+        
+        {/* ENCABEZADO CON CIERRE EN LOGO Y EN CRUZ */}
         <div className={styles.header}>
-          <div className={styles.headerTitle}>
+          {/* El contenedor del logo ahora es un botón que ejecuta onClose al tocarlo */}
+          <button className={styles.logoCloseBtn} onClick={onClose} title="Cerrar carrito">
             <ShoppingBag size={20} />
-            <span>Tu Carrito {items.length > 0 && `(${items.length})`}</span>
-          </div>
-          <button className={styles.closeBtn} onClick={onClose}><X size={22} /></button>
+            <h2>Mi Carrito</h2>
+          </button>
+          
+          {/* Cruz clásica de cierre siempre presente en PC y Celular */}
+          <button className={styles.closeBtn} onClick={onClose} aria-label="Cerrar carrito">
+            <X size={24} />
+          </button>
         </div>
 
+        {/* CUERPO DEL CARRITO */}
         {items.length === 0 ? (
           <div className={styles.empty}>
-            <ShoppingBag size={52} opacity={0.3} />
+            <ShoppingBag size={44} strokeWidth={1.5} />
             <p>Tu carrito está vacío</p>
-            <button className="btn btn-primary" onClick={onClose}>Ver Smart TVs</button>
+            <button className="btn btn-gold" onClick={onClose}>Ver productos</button>
           </div>
         ) : step === 'cart' ? (
           <>
             <div className={styles.items}>
               {items.map(item => (
                 <div key={item.id} className={styles.item}>
-                  <div className={styles.itemImg}>
-                    {item.imagen_url
-                      ? <img src={item.imagen_url} alt={item.nombre} />
-                      : <div className={styles.itemImgPlaceholder}>📺</div>
-                    }
-                  </div>
+                  {item.image_url && (
+                    <img src={item.image_url} alt={item.nombre} className={styles.itemImage} />
+                  )}
                   <div className={styles.itemInfo}>
-                    <span className={styles.itemName}>{item.nombre}</span>
+                    <h4 className={styles.itemName}>{item.nombre}</h4>
                     <span className={styles.itemPrice}>${item.precio.toLocaleString('es-AR')}</span>
-                    <div className={styles.qtyControls}>
-                      <button onClick={() => updateQty(item.id, item.cantidad - 1)}><Minus size={14} /></button>
-                      <span>{item.cantidad}</span>
-                      <button onClick={() => updateQty(item.id, item.cantidad + 1)}><Plus size={14} /></button>
-                    </div>
                   </div>
+                  
+                  <div className={styles.qtyAction}>
+                    <button className={styles.qtyBtn} onClick={() => updateQty(item.id, item.cantidad - 1)}>
+                      <Minus size={13} />
+                    </button>
+                    <span className={styles.qtyNum}>{item.cantidad}</span>
+                    <button className={styles.qtyBtn} onClick={() => updateQty(item.id, item.cantidad + 1)}>
+                      <Plus size={13} />
+                    </button>
+                  </div>
+
                   <button className={styles.removeBtn} onClick={() => removeItem(item.id)}>
-                    <Trash2 size={16} />
+                    <Trash2 size={15} />
                   </button>
                 </div>
               ))}
             </div>
 
             <div className={styles.footer}>
-              <div className={styles.subtotalRow}>
-                <span>Subtotal</span>
-                <span className={styles.subtotalAmt}>${subtotal.toLocaleString('es-AR')}</span>
+              <div className={styles.totalBlock}>
+                <div className={styles.totalRow}>
+                  <span>Subtotal:</span>
+                  <strong>${subtotal.toLocaleString('es-AR')}</strong>
+                </div>
               </div>
-              <button className="btn btn-gold" style={{ width: '100%', justifyContent: 'center' }} onClick={() => setStep('shipping')}>
-                <MapPin size={17} /> Calcular Envío y Continuar
+              <button className="btn btn-primary" style={{ justifyContent: 'center' }} onClick={() => setStep('shipping')}>
+                Continuar con el envío →
               </button>
             </div>
           </>
         ) : step === 'shipping' ? (
-          <div className={styles.shippingStep}>
-            <h3 className={styles.stepTitle}>📍 Calculá el envío</h3>
-
+          <div className={styles.items} style={{ gap: '1.25rem' }}>
+            <h3>Método de Entrega</h3>
+            
             <div className={styles.methodTabs}>
-              <button className={`${styles.tab} ${locMethod === 'geo' ? styles.tabActive : ''}`} onClick={() => setLocMethod('geo')}>
-                <MapPin size={15} /> GPS
+              <button 
+                className={`${styles.tab} ${locMethod === 'geo' ? styles.tabActive : ''}`}
+                onClick={() => setLocMethod('geo')}
+              >
+                <MapPin size={15} /> Ubicación GPS
               </button>
-              <button className={`${styles.tab} ${locMethod === 'cp' ? styles.tabActive : ''}`} onClick={() => setLocMethod('cp')}>
-                📮 Código Postal
+              <button 
+                className={`${styles.tab} ${locMethod === 'cp' ? styles.tabActive : ''}`}
+                onClick={() => setLocMethod('cp')}
+              >
+                Código Postal
               </button>
             </div>
 
             {locMethod === 'geo' ? (
-              <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={handleGeo}>
-                {loadingShip ? <Loader size={16} className="spin" /> : <MapPin size={16} />}
-                Usar mi ubicación
-              </button>
-            ) : (
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <input
-                  type="text"
-                  placeholder="Ej: 1437"
-                  value={cp}
-                  onChange={e => setCp(e.target.value)}
-                  maxLength={6}
-                  style={{ flex: 1, padding: '0.65rem 0.8rem', border: '2px solid var(--gris-medio)', borderRadius: '6px', fontSize: '1rem' }}
-                />
-                <button className="btn btn-primary" onClick={handleCP} disabled={loadingShip}>
-                  {loadingShip ? <Loader size={16} /> : 'Calcular'}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <p style={{ fontSize: '0.85rem', color: '#666', lineHeight: '1.4' }}>
+                  Calculá el costo de entrega express mediante el GPS de tu celular.
+                </p>
+                <button className="btn btn-outline" style={{ justifyContent: 'center' }} onClick={handleGeo} disabled={loadingShip}>
+                  {loadingShip ? <Loader size={16} className="spin" /> : <MapPin size={15} />}
+                  Calcular por GPS
                 </button>
               </div>
+            ) : (
+              <form onSubmit={handleCP} style={{ display: 'flex', gap: '0.5rem' }}>
+                <input 
+                  type="text" 
+                  placeholder="Ej: 1752" 
+                  value={cp} 
+                  onChange={e => setCp(e.target.value)}
+                  style={{ flex: 1, padding: '0.6rem', borderRadius: '6px', border: '1px solid #ccc', fontSize: '0.9rem' }}
+                />
+                <button type="submit" className="btn btn-primary" disabled={loadingShip}>
+                  {loadingShip ? <Loader size={16} className="spin" /> : 'Calcular'}
+                </button>
+              </form>
             )}
 
             {shipping && (
-              <div className={styles.shippingResult}>
-                <p className={styles.shippingMsg}>{shipping.mensaje}</p>
-                <div className={styles.shippingCost}>
-                  {shipping.costo === 0
-                    ? <span className={styles.free}>¡ENVÍO GRATIS!</span>
-                    : <span>${shipping.costo.toLocaleString('es-AR')}</span>
-                  }
+              <div className={styles.shippingBox}>
+                <div className={styles.shippingInfo}>
+                  <span className={styles.shipZone}>Zona: {shipping.zona}</span>
+                  <span className={styles.shipPrice}>Costo: ${shipping.costo.toLocaleString('es-AR')}</span>
                 </div>
               </div>
             )}
+
+            <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto', paddingTop: '1rem' }}>
+              <button className="btn btn-outline" onClick={() => setStep('cart')}>← Volver</button>
+              <button 
+                className="btn btn-primary" 
+                style={{ flex: 1, justifyContent: 'center' }} 
+                onClick={() => setStep('confirm')}
+                disabled={!shipping}
+              >
+                Siguiente
+              </button>
+            </div>
+          </div>
+        ) : step === 'confirm' ? (
+          <div className={styles.items} style={{ gap: '1.25rem' }}>
+            <h3>Confirmar Datos</h3>
 
             <div className="form-group">
               <label>Dirección de entrega</label>
@@ -202,6 +212,7 @@ export default function CartDrawer({ isOpen, onClose }) {
                 placeholder="Calle, número, piso, localidad"
                 value={address}
                 onChange={e => setAddress(e.target.value)}
+                style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid #ccc', fontSize: '0.9rem' }}
               />
             </div>
 
@@ -211,15 +222,15 @@ export default function CartDrawer({ isOpen, onClose }) {
               <div className={`${styles.totalRow} ${styles.totalFinal}`}><span>TOTAL</span><span>${total.toLocaleString('es-AR')}</span></div>
             </div>
 
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <button className="btn btn-outline" onClick={() => setStep('cart')}>← Volver</button>
+            <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto', paddingTop: '1rem' }}>
+              <button className="btn btn-outline" onClick={() => setStep('shipping')}>← Volver</button>
               <button
                 className="btn btn-green"
                 style={{ flex: 1, justifyContent: 'center' }}
                 onClick={handleCheckout}
-                disabled={!shipping || !address || loadingOrder}
+                disabled={!shipping || !address.trim() || loadingOrder}
               >
-                {loadingOrder ? <Loader size={16} className="spin" /> : <MessageCircle size={17} />}
+                {loadingOrder ? <Loader size={16} className="spin" /> : <MessageCircle size={16} />}
                 Finalizar por WhatsApp
               </button>
             </div>
